@@ -19,4 +19,4 @@ jobs:
         pip install python-telegram-bot --upgrade
     - name: Generate
       run: |
-        python generate.py ${{ secrets.POCKET_CONSUMER_KEY }} ${{ secrets.POCKET_ACCESS_TOKEN }} ${{ secrets.TELEGRAM_BOT_API_TOKEN }}
+        python generate.py ${{ secrets.POCKET_CONSUMER_KEY }} ${{ secrets.POCKET_ACCESS_TOKEN }} ${{ secrets.TELEGRAM_BOT_API_KEY }}
