@@ -1,0 +1,22 @@
+name: Generate Newsletter
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.8
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install requests
+        pip install python-telegram-bot --upgrade
+    - name: Generate
+      run: |
+        python generate.py ${{ secrets.POCKET_CONSUMER_KEY }} ${{ secrets.POCKET_ACCESS_TOKEN }} ${{ secrets.TELEGRAM_BOT_API_TOKEN }}
