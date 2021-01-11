@@ -15,7 +15,7 @@ since = int(time.mktime((datetime.now() - timedelta(1)).timetuple()))
 
 bot = telegram.Bot(token=telegram_bot_api_key)
 
-response = requests.get(f'https://getpocket.com/v3/get?consumer_key={consumer_key}&access_token={access_token}&state=archive&detailType=complete&since={since}&sort=newest&tag=newsletter').content
+response = requests.get(f'https://getpocket.com/v3/get?consumer_key={consumer_key}&access_token={access_token}&state=archive&detailType=complete&since={since}&sort=oldest&tag=newsletter').content
 
 data = json.loads(response)
 
@@ -27,7 +27,8 @@ def mapItem(item):
 	return f"✍️ {authors}\n🏷️ [{title}]({url})\n📜 {description}"
 
 items = list(map(lambda kv: kv[1], data["list"].items()))
+items = list(filter(lambda x: int(x['time_read']) >= since, items))
+items = list(map(lambda x: mapItem(x), items))
 
-if len(items) != 0:
-	newsletter = "\n\n".join(list(map(lambda x: mapItem(x), items)))
-	bot.send_message(chat_id="@krossovochkin_newsletter", text=newsletter, parse_mode=telegram.ParseMode.MARKDOWN)
+for item in items:
+    bot.send_message(chat_id="@krossovochkin_newsletter", text=item, parse_mode=telegram.ParseMode.MARKDOWN, disable_web_page_preview=True)
