@@ -13,6 +13,14 @@ telegram_bot_api_key = sys.argv[3]
 
 since = int(time.mktime((datetime.now() - timedelta(1)).timetuple()))
 
+file_name = "temp"
+if os.path.exists(file_name):
+    with open(file_name, "r") as f:
+        since = int(f.readline())
+
+with open(file_name, "w") as f:
+    f.write(str(int(time.mktime(datetime.now().timetuple()))))
+
 bot = telegram.Bot(token=telegram_bot_api_key)
 
 response = requests.get(f'https://getpocket.com/v3/get?consumer_key={consumer_key}&access_token={access_token}&state=archive&detailType=complete&since={since}&sort=oldest&tag=newsletter').content
@@ -20,15 +28,16 @@ response = requests.get(f'https://getpocket.com/v3/get?consumer_key={consumer_ke
 data = json.loads(response)
 
 def mapItem(item):
-	title = item['resolved_title']
-	url = item['resolved_url']
-	description = item['excerpt']
-	authors = ",".join(list(map(lambda kv: kv[1]['name'], item.get("authors", {}).items())))
-	return f"✍️ {authors}\n🏷️ [{title}]({url})\n📜 {description}"
+    title = item['resolved_title']
+    url = item['resolved_url']
+    description = item['excerpt']
+    authors = ",".join(list(map(lambda kv: kv[1]['name'], item.get("authors", {}).items())))
+    return f"✍️ {authors}\n🏷️ [{title}]({url})\n📜 {description}"
 
-items = list(map(lambda kv: kv[1], data["list"].items()))
-items = list(filter(lambda x: int(x['time_read']) >= since, items))
-items = list(map(lambda x: mapItem(x), items))
-
-for item in items:
-    bot.send_message(chat_id="@krossovochkin_newsletter", text=item, parse_mode=telegram.ParseMode.MARKDOWN, disable_web_page_preview=True)
+if 'list' in data and len(data["list"]) > 0:
+    items = list(map(lambda kv: kv[1], data["list"].items()))
+    items = list(filter(lambda x: int(x['time_read']) >= since, items))
+    items = list(map(lambda x: mapItem(x), items))
+    
+    for item in items:
+        bot.send_message(chat_id="@krossovochkin_newsletter", text=item, parse_mode=telegram.ParseMode.MARKDOWN, disable_web_page_preview=True)
