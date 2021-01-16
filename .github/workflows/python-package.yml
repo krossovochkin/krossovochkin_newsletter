@@ -2,7 +2,7 @@ name: Generate Newsletter
 
 on:
   schedule:
-    - cron: '0 5 * * *'
+    - cron: '0 * * * *'
   workflow_dispatch:
 
 jobs:
@@ -22,3 +22,7 @@ jobs:
     - name: Generate
       run: |
         python generate.py ${{ secrets.POCKET_CONSUMER_KEY }} ${{ secrets.POCKET_ACCESS_TOKEN }} ${{ secrets.TELEGRAM_BOT_API_KEY }}
+    - name: Commit & Push changes
+      uses: actions-js/push@master
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
