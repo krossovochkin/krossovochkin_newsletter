@@ -18,9 +18,6 @@ if os.path.exists(file_name):
     with open(file_name, "r") as f:
         since = int(f.readline())
 
-with open(file_name, "w") as f:
-    f.write(str(int(time.mktime(datetime.now().timetuple()))))
-
 bot = telegram.Bot(token=telegram_bot_api_key)
 
 response = requests.get(f'https://getpocket.com/v3/get?consumer_key={consumer_key}&access_token={access_token}&state=archive&detailType=complete&since={since}&sort=oldest&tag=newsletter').content
@@ -35,6 +32,9 @@ def mapItem(item):
     return f"✍️ {authors}\n🏷️ [{title}]({url})\n📜 {description}"
 
 if 'list' in data and len(data["list"]) > 0:
+    with open(file_name, "w") as f:
+        f.write(str(int(time.mktime(datetime.now().timetuple()))))
+
     items = list(map(lambda kv: kv[1], data["list"].items()))
     items = list(filter(lambda x: int(x['time_read']) >= since, items))
     items = list(map(lambda x: mapItem(x), items))
