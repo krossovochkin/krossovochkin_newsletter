@@ -29,7 +29,10 @@ def mapItem(item):
     url = item['resolved_url']
     description = item['excerpt']
     authors = ",".join(list(map(lambda kv: kv[1]['name'], item.get("authors", {}).items())))
-    return f"✍️ {authors}\n🏷️ [{title}]({url})\n📜 {description}"
+    if authors:
+        return f"✍️ {authors}\n🏷️ [{title}]({url})\n📜 {description}"
+    else:
+        return f"🏷️ [{title}]({url})\n📜 {description}"
 
 if 'list' in data and len(data["list"]) > 0:
     with open(file_name, "w") as f:
