@@ -23,7 +23,7 @@ def saveSince(since):
         f.write(str(since))
             
 def loadArticles(since, single):
-    url = f'https://getpocket.com/v3/get?consumer_key={consumer_key}&access_token={access_token}&state=archive&detailType=complete&since={since}&sort=oldest&tag=newsletter'
+    url = f'https://getpocket.com/v3/get?consumer_key={consumer_key}&access_token={access_token}&state=archive&detailType=complete&since={since}&sort=newest&tag=newsletter'
     
     if single:
         url += "&count=1"
